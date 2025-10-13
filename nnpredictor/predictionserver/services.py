@@ -35,7 +35,7 @@ def convert_output_data(outputData):
 
 def _predict(args):
     model, inputData = args    
-    pred = model.predict(inputData, batch_size=1, verbose=0)[:, -1]
+    pred = model.predict(inputData, batch_size=1, verbose=0)#[:, -1]
     pred = np.reshape(pred, (settings.EXIT_LENGTH))
     return pred.tolist()
 
