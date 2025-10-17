@@ -14,8 +14,8 @@ def convert_input_data(inputData):
     
     for field in inputData:
         data = np.array(inputData[field], dtype=np.float32)
-        data -= settings.MEANS[field]
-        data /= settings.STDS[field]
+        #data -= settings.MEANS[field]
+        #data /= settings.STDS[field]
         inputField = np.reshape(data, (1, settings.REQ_LENGTH_INPUT, 1))
         inputArrays.append(inputField)
 
@@ -34,9 +34,14 @@ def convert_output_data(outputData):
     return out
 
 def _predict(args):
-    model, inputData = args    
+    model, inputData = args
+    mean = inputData.mean()
+    inputData -= mean
+    std = inputData.std()
+    inputData /= std
     pred = model.predict(inputData, batch_size=1, verbose=0)[:, -1]
     pred = np.reshape(pred, (settings.EXIT_LENGTH))
+    pred = pred*std + mean
     return pred.tolist()
 
 def predict(models, data):
@@ -53,4 +58,5 @@ def make_prediction(inputData):
     data = convert_input_data(inputData)
     models = get_models()
     prediction = predict(models, data)
-    return convert_output_data(prediction)
+    #return convert_output_data(prediction)
+    return prediction
